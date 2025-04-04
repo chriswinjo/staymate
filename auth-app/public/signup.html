@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup - StayMate</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #6b4226;
+        background: url("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDd8fGZyaWVuZHxlbnwwfHx8fDE2ODk5MjQ4NjY&ixlib=rb-4.0.3&q=80&w=1920")
+          no-repeat center center/cover;
+      }
+
+      header {
+        background: transparent;
+        padding: 20px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+      }
+
+      header h1 {
+        font-size: 2.2rem;
+        margin: 0;
+        color: #e76f51;
+        font-weight: 600;
+      }
+
+      .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDd8fGZyaWVuZHxlbnwwfHx8fDE2ODk5MjQ4NjY&ixlib=rb-4.0.3&q=80&w=1920")
+          no-repeat center center/cover;
+        filter: blur(5px);
+        z-index: -1;
+      }
+      .loglink {
+        color: #c8553d;
+        padding-left: 235px;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgb(0 0 0 / 74%);
+      }
+
+      form {
+        background: rgba(227, 213, 202, 0.8);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        animation: fadeIn 1s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      form h2 {
+        color: #e76f51;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+
+      input {
+        display: block;
+        width: 100%;
+        margin: 15px auto;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        font-family: "Poppins", sans-serif;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        margin: 20px auto;
+        padding: 12px;
+        background-color: #e76f51;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        transition: background-color 0.3s, transform 0.3s;
+      }
+
+      button:hover {
+        background-color: #c8553d;
+        transform: translateY(-3px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background"></div>
+    <div class="overlay"></div>
+    <header></header>
+    <form id="signupForm" autocomplete="off">
+      <h2>Signup</h2>
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+      <a href="/login" class="loglink" id="login-btn">Login</a>
+    </form>
+    <script>
+      document.getElementById("signupForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("http://localhost:3000/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          // Display message or error from response
+          alert(result.message || result.error);
+
+          // Redirect to login page on success
+          if (response.ok) {
+            window.location.href = "/login"; // Redirect to login page
+          }
+        } catch (error) {
+          alert("Something went wrong. Please try again.");
+          console.error(error);
+        }
+      };
+    </script>
+  </body>
+</html>

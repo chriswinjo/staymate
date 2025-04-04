@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayMate - Roommate Finder</title>
+    <style>
+      /* Keep existing styles */
+      /* Additional styles for new components */
+      .initial-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 50px;
+      }
+
+      .initial-buttons button {
+        background-color: #e76f51;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background-color 0.3s, transform 0.3s;
+      }
+
+      .initial-buttons button:last-child {
+        background-color: #6b4226;
+      }
+
+      .initial-buttons button:hover {
+        transform: translateY(-3px);
+      }
+
+      .initial-buttons button:first-child:hover {
+        background-color: #c8553d;
+      }
+
+      .initial-buttons button:last-child:hover {
+        background-color: #523219;
+      }
+
+      .registration-form {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(227, 213, 202, 0.8);
+        border-radius: 15px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+
+      .registration-form h2 {
+        text-align: center;
+        color: #e76f51;
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        margin-bottom: 5px;
+        color: #6b4226;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(245, 235, 224, 0.8);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .submit-btn {
+        grid-column: span 2;
+        background-color: #e76f51;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+        margin-top: 20px;
+      }
+
+      .submit-btn:hover {
+        background-color: #c8553d;
+        transform: translateY(-3px);
+      }
+
+      /* Hide main content initially */
+      #main-search-content {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Keep existing header -->
+
+    <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayMate - Roommate Finder</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        min-height: 100vh;
+        position: relative;
+        overflow-y: auto;
+        background: #f5ebe0;
+        color: #6b4226;
+      }
+
+      .background {
+        background: url("https://source.unsplash.com/1920x1080/?apartment,room")
+          no-repeat center center fixed;
+        background-size: cover;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        opacity: 0.7;
+      }
+
+      header {
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 40px;
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .logo img {
+        width: 180px;
+        margin-left: 0;
+      }
+
+      .profile-icon img {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      .main-content {
+        position: relative;
+        text-align: center;
+        padding-top: 50px;
+      }
+
+      h1 {
+        font-size: 36px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #e76f51;
+        animation: fadeIn 2s ease-in-out;
+      }
+
+      /* Initial View Styles */
+      .initial-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 50px;
+      }
+
+      .initial-buttons button {
+        background-color: #e76f51;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
+      }
+
+      .initial-buttons button:last-child {
+        background-color: #6b4226;
+      }
+
+      .initial-buttons button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      /* Search Section Styles */
+      .search-filters {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(227, 213, 202, 0.9);
+        border-radius: 15px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .search-filters input,
+      .search-filters select {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #6b4226;
+        font-size: 14px;
+      }
+
+      .search-filters button {
+        background-color: #e76f51;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        font-weight: 500;
+        grid-column: span 2;
+      }
+
+      /* Registration Form Styles */
+      .registration-form {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(227, 213, 202, 0.9);
+        border-radius: 15px;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+
+      .registration-form h2 {
+        color: #e76f51;
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        margin-bottom: 5px;
+        color: #6b4226;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+        grid-column: span 2;
+      }
+
+      .submit-btn {
+        grid-column: span 2;
+        background-color: #e76f51;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        font-size: 16px;
+      }
+
+      .roommate-listings {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .roommate-card {
+        background-color: rgba(227, 213, 202, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      footer {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        margin-top: 40px;
+      }
+
+      .footer-links a {
+        color: #6b4226;
+        text-decoration: none;
+        margin: 0 10px;
+        transition: color 0.3s ease;
+      }
+
+      /* Hide sections initially */
+      #main-search-content {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .submit-btn,
+        .form-group textarea {
+          grid-column: span 1;
+        }
+
+        .initial-buttons {
+          flex-direction: column;
+          padding: 0 20px;
+        }
+
+        .initial-buttons button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background"></div>
+
+    <header>
+      <div class="logo">
+        <h2 style="color: #e76f51;">StayMate</h2>
+      </div>
+      <div class="profile-icon">
+        <img src="https://via.placeholder.com/40" alt="Profile Icon" />
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div id="initial-view">
+        <h1>Welcome to StayMate</h1>
+        <div class="initial-buttons">
+          <button onclick="showFindRoommate()">Find a Roommate</button>
+          <button onclick="showRegistration()">Register as Roommate</button>
+        </div>
+      </div>
+
+      <div id="main-search-content">
+        <h1>Find Your Perfect Roommate</h1>
+        <div class="search-filters">
+          <input
+            type="text"
+            id="location"
+            placeholder="Location (e.g., city, neighborhood)"
+          />
+          <select id="smoking">
+            <option value="">Smoking Preference</option>
+            <option value="non-smoker">Non-smoker</option>
+            <option value="smoker">Smoker</option>
+          </select>
+          <select id="pets">
+            <option value="">Pets Preference</option>
+            <option value="pet-friendly">Pet-friendly</option>
+            <option value="no-pets">No pets</option>
+          </select>
+          <select id="lifestyle">
+            <option value="">Lifestyle Preferences</option>
+            <option value="early-bird">Early Bird</option>
+            <option value="night-owl">Night Owl</option>
+            <option value="social">Social/Outgoing</option>
+            <option value="quiet">Quiet/Reserved</option>
+          </select>
+          <select id="age">
+            <option value="">Age Range</option>
+            <option value="18-25">18-25</option>
+            <option value="26-35">26-35</option>
+            <option value="36-45">36-45</option>
+            <option value="46+">46+</option>
+          </select>
+          <select id="budget">
+            <option value="">Budget Range</option>
+            <option value="0-5000">₹0 - ₹5,000</option>
+            <option value="5001-10000">₹5,001 - ₹10,000</option>
+            <option value="10001-15000">₹10,001 - ₹15,000</option>
+            <option value="15001+">₹15,000+</option>
+          </select>
+          <button onclick="filterRoommates()">Find Roommates</button>
+        </div>
+
+        <div class="roommate-listings" id="roommate-listings">
+          <!-- Sample roommate cards will be added here -->
+        </div>
+      </div>
+
+      <div class="registration-form" id="registration-form">
+        <h2>Register as a Roommate</h2>
+        <form onsubmit="handleRegistration(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" required />
+            </div>
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" min="18" required />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" required />
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" required />
+            </div>
+            <div class="form-group">
+              <label>Location Preference</label>
+              <input type="text" required />
+            </div>
+            <div class="form-group">
+              <label>Budget Range</label>
+              <select required>
+                <option value="">Select Budget Range</option>
+                <option value="0-5000">₹0 - ₹5,000</option>
+                <option value="5001-10000">₹5,001 - ₹10,000</option>
+                <option value="10001-15000">₹10,001 - ₹15,000</option>
+                <option value="15001+">₹15,000+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>About Me</label>
+              <textarea
+                placeholder="Tell potential roommates about yourself..."
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="roommate-listings" id="roommate-listings">
+        <div
+          class="roommate-card"
+          data-location="New York"
+          data-smoking="non-smoker"
+          data-pets="pet-friendly"
+          data-lifestyle="social"
+          data-age="26-35"
+          data-budget="5001-10000"
+        >
+          <img
+            src="C:\Users\ASUS\Downloads\41jLBhDISxL._AC_UF1000,1000_QL80_.jpg"
+            alt="Jacob Profile"
+          />
+          <div>
+            <h3>Jacob Paul</h3>
+            <p>
+              Loves hiking, cooking, and quiet evenings. Prefers a clean and
+              organized living space.
+            </p>
+          </div>
+
+          <button class="contact-btn" onclick="contactRoommate('Jacob Paul')">
+            Contact
+          </button>
+        </div>
+        <div
+          class="roommate-card"
+          data-location="Los Angeles"
+          data-smoking="non-smoker"
+          data-pets="no-pets"
+          data-lifestyle="quiet"
+          data-age="18-25"
+          data-budget="0-5000"
+        >
+          <img
+            src="C:\Users\ASUS\Downloads\31o-VWlOtKL._AC_UF1000,1000_QL80_.jpg"
+            alt="Sara Profile"
+          />
+          <div>
+            <h3>Sara Isabel</h3>
+            <p>
+              Enjoys socializing, fitness, and traveling. Looking for a
+              pet-friendly roommate.
+            </p>
+          </div>
+
+          <button class="contact-btn" onclick="contactRoommate('Sara Isabel')">
+            Contact
+          </button>
+        </div>
+    <footer>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <div class="footer-contact">Contact us: support@staymate.com</div>
+      <div class="footer-bottom">&copy; 2025 StayMate. All rights reserved.</div>
+    </footer>
+
+    <script>
+      function showFindRoommate() {
+        //document.getElementById('initial-view').style.display = 'none';
+        document.getElementById('main-search-content').style.display = 'block';
+        document.getElementById('registration-form').style.display = 'none';
+      }
+
+      function showRegistration() {
+        //document.getElementById('initial-view').style.display = 'none';
+        document.getElementById('main-search-content').style.display = 'none';
+        document.getElementById('registration-form').style.display = 'block';
+      }
+
+      function handleRegistration(event) {
+        event.preventDefault();
+        alert('Registration submitted successfully!');
+        // Reset form and show initial view
+        event.target.reset();
+        document.getElementById('registration-form').style.display = 'none';
+        document.getElementById('initial-view').style.display = 'block';
+      }
+
+      function filterRoommates() {
+        // Add roommate filtering logic here
+        alert('Searching for roommates with selected filters...');
+      }
+    </script>
+  </body>
+</html>
+</html>

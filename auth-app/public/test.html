@@ -1,0 +1,206 @@
+
+// Function to fetch room listings from the backend
+function fetchRoomListingsFromBackend() {
+  // Show loading state
+  showLoading();
+
+  // Define your backend API endpoint
+  const backendUrl = "https://your-backend-api.com/api/rooms"; // Replace with your actual backend URL
+
+  // Get current filter values
+  const location = document
+    .getElementById("location")
+    .value.toLowerCase();
+  const smoking = document.getElementById("smoking").value;
+  const pets = document.getElementById("pets").value;
+  const lifestyle = document.getElementById("lifestyle").value;
+  const age = document.getElementById("age").value;
+  const budget = document.getElementById("budget").value;
+
+  // Construct query parameters based on filters
+  const queryParams = new URLSearchParams();
+  if (location) queryParams.append("location", location);
+  if (smoking) queryParams.append("smoking", smoking);
+  if (pets) queryParams.append("pets", pets);
+  if (lifestyle) queryParams.append("lifestyle", lifestyle);
+  if (age) queryParams.append("age", age);
+  if (budget) queryParams.append("budget", budget);
+
+  // Set up the fetch request
+  fetch(`${backendUrl}?${queryParams.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      // Add any authentication headers if needed
+      // 'Authorization': 'Bearer ' + yourAuthToken
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(
+          "Network response was not ok: " + response.statusText
+        );
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Process and display the room listings
+      displayRoomListings(data);
+      hideLoading();
+    })
+    .catch((error) => {
+      console.error("Error fetching data from backend:", error);
+
+      // If backend fetch fails, fall back to local storage data
+      console.log("Falling back to localStorage data");
+      filterRoommatesFromLocalStorage();
+
+      // Hide loading indicator
+      hideLoading();
+    });
+}
+
+// Function to display room listings from backend data
+function displayRoomListings(rooms) {
+  const roommateListings = document.getElementById("roommate-listings");
+  roommateListings.innerHTML = "";
+
+  if (rooms.length === 0) {
+    const noResults = document.createElement("div");
+    noResults.className = "no-results";
+    noResults.innerHTML = `
+<i class="fas fa-search"></i>
+<p>No roommates found matching your criteria.</p>
+<p>Try adjusting your filters for more results.</p>
+`;
+    roommateListings.appendChild(noResults);
+    return;
+  }
+
+  rooms.forEach((room, index) => {
+    const roommateCard = document.createElement("div");
+    roommateCard.className = "roommate-card";
+    roommateCard.innerHTML = `
+<img src="${
+  room.image || "https://via.placeholder.com/90"
+}" alt="Roommate Profile">
+<div class="details">
+  <h3>Room Available</h3>
+  <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${
+    room.location
+  }</p>
+  <p><i class="fas fa-smoking${
+    room.smoking === "non-smoker" ? "-ban" : ""
+  }"></i> <strong>Smoking:</strong> ${room.smoking}</p>
+  <p><i class="fas fa-paw"></i> <strong>Pets:</strong> ${room.pets}</p>
+  <p><i class="fas fa-user-friends"></i> <strong>Lifestyle:</strong> ${
+    room.lifestyle
+  }</p>
+  <p><i class="fas fa-birthday-cake"></i> <strong>Age Range:</strong> ${
+    room.age
+  }</p>
+  <p><i class="fas fa-rupee-sign"></i> <strong>Budget:</strong> ${
+    room.budget
+  }</p>
+</div>
+<button class="contact-btn" onclick="contactRoommate('${
+  room.id || "Room " + (index + 1)
+}')">
+  <i class="fas fa-comment"></i> Contact
+</button>
+`;
+    roommateListings.appendChild(roommateCard);
+  });
+}
+
+// Fallback function to filter roommates from localStorage when backend is unavailable
+function filterRoommatesFromLocalStorage() {
+  const location = document
+    .getElementById("location")
+    .value.toLowerCase();
+  const smoking = document.getElementById("smoking").value;
+  const pets = document.getElementById("pets").value;
+
+  const lifestyle = document.getElementById("lifestyle").value;
+  const age = document.getElementById("age").value;
+  const budget = document.getElementById("budget").value;
+
+  const roommateListings = document.getElementById("roommate-listings");
+  let rooms = JSON.parse(localStorage.getItem("rooms")) || [];
+
+  roommateListings.innerHTML = "";
+
+  let matchedRooms = 0;
+
+  rooms.forEach((room, index) => {
+    const roomLocation = room.location.toLowerCase();
+    const roomSmoking = room.smoking;
+    const roomPets = room.pets;
+    const roomLifestyle = room.lifestyle;
+    const roomAge = room.age;
+    const roomBudget = room.budget;
+
+    const locationMatch =
+      location === "" || roomLocation.includes(location);
+    const smokingMatch = smoking === "" || roomSmoking === smoking;
+    const petsMatch = pets === "" || roomPets === pets;
+    const lifestyleMatch =
+      lifestyle === "" || roomLifestyle === lifestyle;
+    const ageMatch = age === "" || roomAge === age;
+    const budgetMatch = budget === "" || roomBudget === budget;
+
+    if (
+      locationMatch &&
+      smokingMatch &&
+      petsMatch &&
+      lifestyleMatch &&
+      ageMatch &&
+      budgetMatch
+    ) {
+      matchedRooms++;
+      const roommateCard = document.createElement("div");
+      roommateCard.className = "roommate-card";
+      roommateCard.innerHTML = `
+  <img src="${
+    room.image || "https://via.placeholder.com/90"
+  }" alt="Roommate Profile">
+  <div class="details">
+    <h3>Room Available</h3>
+    <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${
+      room.location
+    }</p>
+    <p><i class="fas fa-smoking${
+      room.smoking === "non-smoker" ? "-ban" : ""
+    }"></i> <strong>Smoking:</strong> ${room.smoking}</p>
+    <p><i class="fas fa-paw"></i> <strong>Pets:</strong> ${room.pets}</p>
+    <p><i class="fas fa-user-friends"></i> <strong>Lifestyle:</strong> ${
+      room.lifestyle
+    }</p>
+    <p><i class="fas fa-birthday-cake"></i> <strong>Age Range:</strong> ${
+      room.age
+    }</p>
+    <p><i class="fas fa-rupee-sign"></i> <strong>Budget:</strong> ${
+      room.budget
+    }</p>
+  </div>
+  <button class="contact-btn" onclick="contactRoommate('Room ${
+    index + 1
+  }')">
+    <i class="fas fa-comment"></i> Contact
+  </button>
+`;
+      roommateListings.appendChild(roommateCard);
+    }
+  });
+
+  if (matchedRooms === 0) {
+    const noResults = document.createElement("div");
+    noResults.className = "no-results";
+    noResults.innerHTML = `
+<i class="fas fa-search"></i>
+<p>No roommates found matching your criteria.</p>
+<p>Try adjusting your filters for more results.</p>
+`;
+    roommateListings.appendChild(noResults);
+  }
+}

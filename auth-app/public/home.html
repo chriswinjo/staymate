@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayMate - Find Your Perfect Roommate</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* Base Styles */
+      :root {
+        --primary: #e76f51;
+        --primary-dark: #c8553d;
+        --primary-light: #f4a261;
+        --secondary: #2a9d8f;
+        --text-primary: #6b4226;
+        --text-secondary: #8a7a5a;
+        --bg-light: #f5ebe0;
+        --bg-card: rgba(227, 213, 202, 0.8);
+        --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        min-height: 100vh;
+        background: var(--bg-light);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Preloader */
+      .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-light);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .preloader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loader {
+        width: 80px;
+        height: 80px;
+        border: 5px solid rgba(231, 111, 81, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+      }
+
+      /* Header */
+      header {
+        width: 100%;
+        height: 90px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 40px;
+        background-color: rgba(245, 235, 224, 0.9);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        transition: var(--transition-smooth);
+        box-shadow: 0 2px 15px rgba(107, 66, 38, 0.1);
+      }
+
+      header.transparent {
+        background-color: transparent;
+        box-shadow: none;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo img {
+        width: 180px;
+        transition: var(--transition-smooth);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+      }
+
+      .nav-links a {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 500;
+        position: relative;
+        transition: var(--transition-smooth);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: var(--primary);
+        transition: var(--transition-smooth);
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .login-btn {
+        background-color: transparent;
+        color: var(--text-primary);
+        border: 2px solid var(--primary);
+        padding: 8px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        font-weight: 500;
+      }
+
+      .login-btn:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .profile-icon img {
+        width: 45px;
+        height: 45px;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: var(--transition-smooth);
+        border: 2px solid var(--primary);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-icon img:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--text-primary);
+        cursor: pointer;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: url("https://plus.unsplash.com/premium_photo-1661766077694-6e3750b0fb97?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cm9vbSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D")
+          no-repeat center center/cover;
+        color: var(--text-primary);
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(245, 235, 224, 0.7);
+        backdrop-filter: blur(3px);
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        padding: 20px;
+        animation: fadeInUp 1.5s ease-out;
+      }
+
+      .hero-content h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: var(--primary);
+        text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        line-height: 1.2;
+      }
+
+      .hero-content p {
+        font-size: 18px;
+        color: var(--text-primary);
+        margin-bottom: 30px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      /* Updated CTA Button Styles - More Professional */
+      .cta-btn {
+        background-color: var(--primary);
+        color: white;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 30px; /* Keeping the curved shape */
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        font-weight: 500;
+        box-shadow: 0 4px 10px rgba(231, 111, 81, 0.2);
+        position: relative;
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+        margin: 10px;
+        min-width: 200px;
+      }
+
+      .cta-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(231, 111, 81, 0.3);
+      }
+
+      .cta-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(231, 111, 81, 0.2);
+      }
+
+      .cta-btn i {
+        margin-right: 8px;
+        transition: transform 0.2s ease;
+      }
+
+      .cta-btn:hover i {
+        transform: translateX(-2px);
+      }
+
+      .cta-btn.secondary {
+        background-color: transparent;
+        color: var(--text-primary);
+        border: 2px solid var(--primary);
+        box-shadow: none;
+      }
+
+      .cta-btn.secondary:hover {
+        background-color: rgba(231, 111, 81, 0.05);
+        color: var(--primary-dark);
+        border-color: var(--primary-dark);
+      }
+
+      .cta-btn.secondary:hover i {
+        transform: translateX(2px);
+      }
+      /* End of Updated CTA Button Styles */
+
+      .scroll-down {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--primary);
+        font-size: 24px;
+        cursor: pointer;
+        animation: bounce 2s infinite;
+        z-index: 2;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0) translateX(-50%);
+        }
+        40% {
+          transform: translateY(-20px) translateX(-50%);
+        }
+        60% {
+          transform: translateY(-10px) translateX(-50%);
+        }
+      }
+
+      /* Why Choose Section */
+      .why-choose-section {
+        padding: 100px 20px 80px;
+        background: linear-gradient(
+          to bottom,
+          var(--bg-light),
+          rgba(227, 213, 202, 0.5)
+        );
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .section-title {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 50px;
+      }
+
+      .section-title h2 {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        width: 80px;
+        height: 4px;
+        background-color: var(--primary);
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+      }
+
+      .features {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .feature {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+        width: 300px;
+        transition: var(--transition-smooth);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .feature::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary);
+        z-index: -1;
+        transition: var(--transition-smooth);
+      }
+
+      .feature:hover::before {
+        height: 100%;
+        opacity: 0.1;
+      }
+
+      .feature:hover {
+        transform: translateY(-15px);
+        box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-icon {
+        width: 70px;
+        height: 70px;
+        background-color: rgba(231, 111, 81, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: var(--primary);
+        font-size: 28px;
+        transition: var(--transition-smooth);
+      }
+
+      .feature:hover .feature-icon {
+        background-color: var(--primary);
+        color: white;
+        transform: rotateY(360deg);
+      }
+
+      .feature h3 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-primary);
+      }
+
+      .feature p {
+        font-size: 15px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+      }
+
+      .feature-btn {
+        display: inline-block;
+        color: var(--primary);
+        font-weight: 500;
+        text-decoration: none;
+        transition: var(--transition-smooth);
+      }
+
+      .feature-btn:hover {
+        color: var(--primary-dark);
+        transform: translateX(5px);
+      }
+
+      /* How It Works Section */
+      .how-it-works {
+        padding: 80px 20px;
+        background-color: var(--bg-light);
+        position: relative;
+      }
+
+      .steps-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .steps-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100%;
+        background-color: rgba(231, 111, 81, 0.2);
+        border-radius: 2px;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 60px;
+        position: relative;
+      }
+
+      .step:last-child {
+        margin-bottom: 0;
+      }
+
+      .step-content {
+        width: 45%;
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        position: relative;
+        z-index: 1;
+        transition: var(--transition-smooth);
+      }
+
+      .step-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .step:nth-child(odd) {
+        justify-content: flex-start;
+      }
+
+      .step:nth-child(even) {
+        justify-content: flex-end;
+      }
+
+      .step-number {
+        width: 60px;
+        height: 60px;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 600;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        box-shadow: 0 5px 15px rgba(231, 111, 81, 0.3);
+      }
+
+      .step-content h3 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-primary);
+      }
+
+      .step-content p {
+        color: var(--text-secondary);
+        font-size: 15px;
+      }
+
+      /* Stats Section */
+      .stats-section {
+        padding: 60px 20px;
+        background-color: var(--primary);
+        color: white;
+        text-align: center;
+      }
+
+      .stats-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .stat-item {
+        flex: 1;
+        min-width: 200px;
+        padding: 20px;
+      }
+
+      .stat-number {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .stat-number.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .stat-text {
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--text-primary);
+        color: white;
+        padding: 60px 20px 20px;
+        position: relative;
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+      }
+
+      .footer-logo img {
+        width: 150px;
+        margin-bottom: 20px;
+      }
+
+      .footer-about p {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .social-link {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: var(--transition-smooth);
+      }
+
+      .social-link:hover {
+        background-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .footer-links h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 10px;
+      }
+
+      .footer-links h3::after {
+        content: "";
+        position: absolute;
+        width: 40px;
+        height: 3px;
+        background-color: var(--primary);
+        bottom: 0;
+        left: 0;
+        border-radius: 2px;
+      }
+
+      .footer-links ul {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: var(--transition-smooth);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+        transform: translateX(5px);
+      }
+
+      .footer-contact p {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 15px;
+      }
+
+      .footer-contact i {
+        color: var(--primary);
+      }
+
+      .footer-bottom {
+        max-width: 1200px;
+        margin: 40px auto 0;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .copyright {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+      }
+
+      .footer-bottom-links {
+        display: flex;
+        gap: 20px;
+      }
+
+      .footer-bottom-links a {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        transition: var(--transition-smooth);
+      }
+
+      .footer-bottom-links a:hover {
+        color: var(--primary);
+      }
+
+      /* Back to Top Button */
+      .back-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition-smooth);
+        z-index: 99;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .back-to-top:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 1s ease-out forwards;
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 1s ease-out forwards;
+      }
+
+      .fade-in-left {
+        animation: fadeInLeft 1s ease-out forwards;
+      }
+
+      .fade-in-right {
+        animation: fadeInRight 1s ease-out forwards;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 992px) {
+        .steps-container::before {
+          left: 20px;
+        }
+
+        .step {
+          justify-content: flex-start !important;
+        }
+
+        .step-content {
+          width: calc(100% - 60px);
+          margin-left: 60px;
+        }
+
+        .step-number {
+          left: 20px;
+          transform: translateY(-50%);
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 10px 20px;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 90px;
+          left: 0;
+          width: 100%;
+          background-color: rgba(245, 235, 224, 0.95);
+          flex-direction: column;
+          padding: 20px;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(10px);
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+
+        .hero-content h1 {
+          font-size: 36px;
+        }
+
+        .hero-content p {
+          font-size: 16px;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .footer-bottom-links {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .feature {
+          width: 100%;
+        }
+
+        .stats-container {
+          gap: 20px;
+        }
+
+        .stat-item {
+          min-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Preloader -->
+    <div class="preloader">
+      <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header id="header">
+      <div class="logo">
+        <img src="images/logo.png" alt="StayMate Logo" />
+      </div>
+      <nav class="nav-links" id="nav-links">
+        <a href="/home">Home</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="aboutus.html">About us</a>
+
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="header-right">
+        <button
+          id="logoutBtn"
+          style="
+            background-color: rgb(231, 111, 81);
+            color: white;
+            border: none;
+            padding: 7px 17px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 20px;
+            border-radius: 10px;
+            transition: background 0.3s, transform 0.2s;
+            transform: scale(1);
+          "
+          onmouseover="this.style.backgroundColor='#d63b20'; this.style.transform='scale(1.05)';"
+          onmouseout="this.style.backgroundColor='#e76f51'; this.style.transform='scale(1)';"
+          onmousedown="this.style.transform='scale(0.95)';"
+          onmouseup="this.style.transform='scale(1.05)';"
+        >
+          Logout
+        </button>
+
+        <a href="/profilepage" class="profile-link">
+          <div class="profile-icon">
+            <img src="images/profile icon.png" alt="Profile Icon" />
+          </div>
+        </a>
+
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+      <div class="hero-content">
+        <h1>The Smart Way to Find Your Perfect Stay!</h1>
+        <p>
+          StayMate connects you with the ideal roommate/room or apartment based
+          on your preferences, lifestyle, and budget. Start your journey to
+          comfortable co-living today!
+        </p>
+        <div class="cta-buttons">
+          <a href="/roommatefinder" class="cta-btn"
+            ><i class="fas fa-user-friends"></i> Find a Roommate or Room</a
+          >
+          <a href="/listings" class="cta-btn secondary"
+            ><i class="fas fa-home"></i> Find or List Apartment</a
+          >
+        </div>
+      </div>
+      <a href="#why-choose" class="scroll-down">
+        <i class="fas fa-chevron-down"></i>
+      </a>
+    </section>
+
+    <!-- Why Choose Section -->
+    <section class="why-choose-section" id="why-choose">
+      <div class="section-title">
+        <h2>Why Choose StayMate?</h2>
+      </div>
+      <div class="features">
+        <div class="feature fade-in-up" style="animation-delay: 0.1s">
+          <div class="feature-icon">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <h3>Easy to Use</h3>
+          <p>
+            Our platform is designed to be intuitive and simple to navigate,
+            making your roommate search experience smooth and efficient.
+          </p>
+          <a href="#" class="feature-btn"
+            >Learn More <i class="fas fa-arrow-right"></i
+          ></a>
+        </div>
+        <div class="feature fade-in-up" style="animation-delay: 0.3s">
+          <div class="feature-icon">
+            <i class="fas fa-sliders-h"></i>
+          </div>
+          <h3>Smart Matching</h3>
+          <p>
+            Our advanced algorithm matches you with compatible roommates based
+            on lifestyle, habits, and preferences.
+          </p>
+          <a href="#" class="feature-btn"
+            >Learn More <i class="fas fa-arrow-right"></i
+          ></a>
+        </div>
+        <div class="feature fade-in-up" style="animation-delay: 0.5s">
+          <div class="feature-icon">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <h3>Wide Range of Options</h3>
+          <p>
+            Browse thousands of listings across multiple locations, with
+            detailed filters to find your perfect match.
+          </p>
+          <a href="#" class="feature-btn"
+            >Learn More <i class="fas fa-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="section-title">
+        <h2>How StayMate Works</h2>
+      </div>
+      <div class="steps-container">
+        <div class="step">
+          <div class="step-content fade-in-left">
+            <h3>Create Your Profile</h3>
+            <p>
+              Sign up and create your detailed profile with your preferences,
+              lifestyle, and what you're looking for in a roommate.
+            </p>
+          </div>
+          <div class="step-number">1</div>
+        </div>
+        <div class="step">
+          <div class="step-content fade-in-right">
+            <h3>Browse Matches</h3>
+            <p>
+              Our algorithm will suggest compatible roommates or rooms based on
+              your profile and preferences.
+            </p>
+          </div>
+          <div class="step-number">2</div>
+        </div>
+        <div class="step">
+          <div class="step-content fade-in-left">
+            <h3>Contact and Meet</h3>
+            <p>
+              Get contact information of potential matches and connect with them
+              outside the app to finalize your co-living arrangements.
+            </p>
+          </div>
+          <div class="step-number">3</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+      <div class="footer-container">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <img src="images/logo.png" alt="StayMate Logo" />
+          </div>
+          <p>
+            StayMate is the leading platform for finding compatible roommates
+            and ideal living spaces across India. Our mission is to make
+            co-living simple, safe, and enjoyable.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"
+              ><i class="fab fa-linkedin-in"></i
+            ></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li>
+              <a href="/roommatefinder"
+                ><i class="fas fa-chevron-right"></i> Find Roommates</a
+              >
+            </li>
+            <li>
+              <a href="/roomlisting"
+                ><i class="fas fa-chevron-right"></i> List Your Space</a
+              >
+            </li>
+            <li>
+              <a href="/aboutus"
+                ><i class="fas fa-chevron-right"></i> About Us</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+          <p>
+            <i class="fas fa-map-marker-alt"></i> 456 Marine Drive, Kochi, India
+          </p>
+          <p><i class="fas fa-phone-alt"></i> +91 9876543210</p>
+          <p><i class="fas fa-envelope"></i> support@staymate.com</p>
+          <p><i class="fas fa-clock"></i> Mon-Fri: 9AM - 6PM</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="copyright">&copy; 2025 StayMate. All rights reserved.</div>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="back-to-top">
+      <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+      // Preloader
+      window.addEventListener("load", function () {
+        const preloader = document.querySelector(".preloader");
+        setTimeout(function () {
+          preloader.classList.add("fade-out");
+        }, 500);
+      });
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch("http://localhost:3000/logout", {
+              method: "GET",
+              credentials: "include", // Ensures session cookie is sent
+            });
+
+            const data = await response.json();
+            console.log("Logout Response:", data);
+
+            if (response.ok) {
+              localStorage.removeItem("user"); // Clear stored user data
+              window.location.href = data.redirect; // Redirect to login page
+            } else {
+              alert("Logout failed: " + data.message);
+            }
+          } catch (error) {
+            console.error("Error during logout:", error);
+          }
+        });
+
+      // Mobile Menu Toggle
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const navLinks = document.getElementById("nav-links");
+
+      mobileMenuBtn.addEventListener("click", function () {
+        navLinks.classList.toggle("active");
+        const icon = mobileMenuBtn.querySelector("i");
+        if (navLinks.classList.contains("active")) {
+          icon.classList.remove("fa-bars");
+          icon.classList.add("fa-times");
+        } else {
+          icon.classList.remove("fa-times");
+          icon.classList.add("fa-bars");
+        }
+      });
+
+      // Header Transparency on Scroll
+      const header = document.getElementById("header");
+      window.addEventListener("scroll", function () {
+        if (window.scrollY > 50) {
+          header.classList.remove("transparent");
+        } else {
+          header.classList.add("transparent");
+        }
+      });
+
+      // Initialize header state
+      if (window.scrollY > 50) {
+        header.classList.remove("transparent");
+      } else {
+        header.classList.add("transparent");
+      }
+
+      // Animate Stats on Scroll
+      const statNumbers = document.querySelectorAll(".stat-number");
+      const statsSection = document.querySelector(".stats-section");
+
+      function animateStats() {
+        if (isElementInViewport(statsSection)) {
+          statNumbers.forEach((stat) => {
+            stat.classList.add("visible");
+          });
+          window.removeEventListener("scroll", animateStats);
+        }
+      }
+
+      window.addEventListener("scroll", animateStats);
+      animateStats(); // Check on page load
+
+      // Back to Top Button
+      const backToTopBtn = document.getElementById("back-to-top");
+
+      window.addEventListener("scroll", function () {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.add("visible");
+        } else {
+          backToTopBtn.classList.remove("visible");
+        }
+      });
+
+      backToTopBtn.addEventListener("click", function () {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+      // Smooth Scroll for Navigation Links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          const targetId = this.getAttribute("href");
+          if (targetId === "#") return;
+
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 90,
+              behavior: "smooth",
+            });
+
+            // Close mobile menu if open
+            if (navLinks.classList.contains("active")) {
+              navLinks.classList.remove("active");
+              const icon = mobileMenuBtn.querySelector("i");
+              icon.classList.remove("fa-times");
+              icon.classList.add("fa-bars");
+            }
+          }
+        });
+      });
+
+      // Animate elements on scroll
+      const animatedElements = document.querySelectorAll(
+        ".fade-in, .fade-in-up, .fade-in-left, .fade-in-right"
+      );
+
+      function checkAnimation() {
+        animatedElements.forEach((element) => {
+          const elementPosition = element.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+
+          if (elementPosition.top < windowHeight * 0.8) {
+            element.style.animationPlayState = "running";
+          }
+        });
+      }
+
+      // Pause animations initially
+      animatedElements.forEach((element) => {
+        element.style.animationPlayState = "paused";
+      });
+
+      window.addEventListener("scroll", checkAnimation);
+      checkAnimation(); // Check on page load
+
+      // Helper function to check if element is in viewport
+      function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return (
+          rect.top <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.bottom >= 0
+        );
+      }
+    </script>
+  </body>
+</html>
